@@ -5,6 +5,7 @@ import ThreeGlobe from "three-globe";
 import { useThree, Object3DNode, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "@/data/globe.json";
+
 declare module "@react-three/fiber" {
   interface ThreeElements {
     threeGlobe: Object3DNode<ThreeGlobe, typeof ThreeGlobe>;
@@ -96,7 +97,13 @@ export function Globe({ globeConfig, data }: WorldProps) {
       _buildData();
       _buildMaterial();
     }
-  }, [globeRef.current]);
+  }, [
+    globeRef.current,
+    globeConfig.globeColor,
+    globeConfig.emissive,
+    globeConfig.emissiveIntensity,
+    globeConfig.shininess,
+  ]); // Added missing dependencies
 
   const _buildMaterial = () => {
     if (!globeRef.current) return;
@@ -135,7 +142,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       });
     }
 
-    // remove duplicates for same lat and lng
+    // Remove duplicates for same lat and lng
     const filteredPoints = points.filter(
       (v, i, a) =>
         a.findIndex((v2) =>
@@ -148,26 +155,27 @@ export function Globe({ globeConfig, data }: WorldProps) {
     setGlobeData(filteredPoints);
   };
 
-useEffect(() => {
-  if (typeof window !== "undefined" && globeRef.current && globeData) {
-    globeRef.current
-      .hexPolygonsData(countries.features)
-      .hexPolygonResolution(3)
-      .hexPolygonMargin(0.7)
-      .showAtmosphere(defaultProps.showAtmosphere)
-      .atmosphereColor(defaultProps.atmosphereColor)
-      .atmosphereAltitude(defaultProps.atmosphereAltitude)
-      .hexPolygonColor((e) => {
-        return defaultProps.polygonColor || "rgba(255,255,255,0.7)";
-      });
-    startAnimation();
-  }
-}, [
-  globeData,
-  defaultProps.showAtmosphere,
-  defaultProps.atmosphereColor,
-  defaultProps.atmosphereAltitude,
-]);
+  useEffect(() => {
+    if (typeof window !== "undefined" && globeRef.current && globeData) {
+      globeRef.current
+        .hexPolygonsData(countries.features)
+        .hexPolygonResolution(3)
+        .hexPolygonMargin(0.7)
+        .showAtmosphere(defaultProps.showAtmosphere)
+        .atmosphereColor(defaultProps.atmosphereColor)
+        .atmosphereAltitude(defaultProps.atmosphereAltitude)
+        .hexPolygonColor(
+          () => defaultProps.polygonColor || "rgba(255,255,255,0.7)"
+        );
+      startAnimation();
+    }
+  }, [
+    globeData,
+    defaultProps.showAtmosphere,
+    defaultProps.atmosphereColor,
+    defaultProps.atmosphereAltitude,
+    defaultProps.polygonColor,
+  ]); // Added missing dependencies
 
   const startAnimation = () => {
     if (!globeRef.current || !globeData) return;
@@ -226,7 +234,7 @@ useEffect(() => {
     return () => {
       clearInterval(interval);
     };
-  }, [globeRef.current, globeData]);
+  }, [globeRef.current, globeData, data]); // Added missing dependencies
 
   return (
     <>

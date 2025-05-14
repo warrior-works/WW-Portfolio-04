@@ -12,10 +12,6 @@ export const CanvasRevealEffect = ({
   dotSize,
   showGradient = true,
 }: {
-  /**
-   * 0.1 - slower
-   * 1.0 - faster
-   */
   animationSpeed?: number;
   opacities?: number[];
   colors?: number[][];
@@ -72,7 +68,7 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
         u_opacities: { value: [], type: "uniform1fv" },
         u_total_size: { value: 0, type: "uniform1f" },
         u_dot_size: { value: 0, type: "uniform1f" },
-      }; // Provide default values during SSR
+      };
     }
 
     let colorsArray = [
@@ -125,7 +121,7 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
         type: "uniform1f",
       },
     };
-  }, [colors, opacities, totalSize, dotSize]); 
+  }, [colors, opacities, totalSize, dotSize]); // Added missing dependencies
 
   return (
     <Shader
