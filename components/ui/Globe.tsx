@@ -148,21 +148,26 @@ export function Globe({ globeConfig, data }: WorldProps) {
     setGlobeData(filteredPoints);
   };
 
-  useEffect(() => {
-    if (globeRef.current && globeData) {
-      globeRef.current
-        .hexPolygonsData(countries.features)
-        .hexPolygonResolution(3)
-        .hexPolygonMargin(0.7)
-        .showAtmosphere(defaultProps.showAtmosphere)
-        .atmosphereColor(defaultProps.atmosphereColor)
-        .atmosphereAltitude(defaultProps.atmosphereAltitude)
-        .hexPolygonColor((e) => {
-          return defaultProps.polygonColor;
-        });
-      startAnimation();
-    }
-  }, [globeData]);
+useEffect(() => {
+  if (typeof window !== "undefined" && globeRef.current && globeData) {
+    globeRef.current
+      .hexPolygonsData(countries.features)
+      .hexPolygonResolution(3)
+      .hexPolygonMargin(0.7)
+      .showAtmosphere(defaultProps.showAtmosphere)
+      .atmosphereColor(defaultProps.atmosphereColor)
+      .atmosphereAltitude(defaultProps.atmosphereAltitude)
+      .hexPolygonColor((e) => {
+        return defaultProps.polygonColor || "rgba(255,255,255,0.7)";
+      });
+    startAnimation();
+  }
+}, [
+  globeData,
+  defaultProps.showAtmosphere,
+  defaultProps.atmosphereColor,
+  defaultProps.atmosphereAltitude,
+]);
 
   const startAnimation = () => {
     if (!globeRef.current || !globeData) return;
