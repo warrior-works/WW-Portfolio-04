@@ -65,67 +65,67 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
   shader = "",
   center = ["x", "y"],
 }) => {
-const uniforms = React.useMemo(() => {
-  if (typeof window === "undefined") {
+  const uniforms = React.useMemo(() => {
+    if (typeof window === "undefined") {
+      return {
+        u_colors: { value: [], type: "uniform3fv" },
+        u_opacities: { value: [], type: "uniform1fv" },
+        u_total_size: { value: 0, type: "uniform1f" },
+        u_dot_size: { value: 0, type: "uniform1f" },
+      }; // Provide default values during SSR
+    }
+
+    let colorsArray = [
+      colors[0],
+      colors[0],
+      colors[0],
+      colors[0],
+      colors[0],
+      colors[0],
+    ];
+    if (colors.length === 2) {
+      colorsArray = [
+        colors[0],
+        colors[0],
+        colors[0],
+        colors[1],
+        colors[1],
+        colors[1],
+      ];
+    } else if (colors.length === 3) {
+      colorsArray = [
+        colors[0],
+        colors[0],
+        colors[1],
+        colors[1],
+        colors[2],
+        colors[2],
+      ];
+    }
+
     return {
-      u_colors: { value: [], type: "uniform3fv" },
-      u_opacities: { value: [], type: "uniform1fv" },
-      u_total_size: { value: 0, type: "uniform1f" },
-      u_dot_size: { value: 0, type: "uniform1f" },
-    }; // Provide default values during SSR
-  }
-
-  let colorsArray = [
-    colors[0],
-    colors[0],
-    colors[0],
-    colors[0],
-    colors[0],
-    colors[0],
-  ];
-  if (colors.length === 2) {
-    colorsArray = [
-      colors[0],
-      colors[0],
-      colors[0],
-      colors[1],
-      colors[1],
-      colors[1],
-    ];
-  } else if (colors.length === 3) {
-    colorsArray = [
-      colors[0],
-      colors[0],
-      colors[1],
-      colors[1],
-      colors[2],
-      colors[2],
-    ];
-  }
-
-  return {
-    u_colors: {
-      value: colorsArray.map((color) => [
-        color[0] / 255,
-        color[1] / 255,
-        color[2] / 255,
-      ]),
-      type: "uniform3fv",
-    },
-    u_opacities: {
-      value: opacities,
-      type: "uniform1fv",
-    },
-    u_total_size: {
-      value: totalSize,
-      type: "uniform1f",
-    },
-    u_dot_size: {
-      value: dotSize,
-      type: "uniform1f",
-    },
-  };
-}, [colors, opacities, totalSize, dotSize]);
+      u_colors: {
+        value: colorsArray.map((color) => [
+          color[0] / 255,
+          color[1] / 255,
+          color[2] / 255,
+        ]),
+        type: "uniform3fv",
+      },
+      u_opacities: {
+        value: opacities,
+        type: "uniform1fv",
+      },
+      u_total_size: {
+        value: totalSize,
+        type: "uniform1f",
+      },
+      u_dot_size: {
+        value: dotSize,
+        type: "uniform1f",
+      },
+    };
+  }, [colors, opacities, totalSize, dotSize]); 
 
   return (
     <Shader
